@@ -1,0 +1,25 @@
+.index{
+    height:100vh;
+    background-image: url("../../assets/background.jpg");
+    background-size: cover;
+}
+.getInfoButtonView{
+    width:80%;
+    margin:0 auto;
+}
+.FormItem{
+    display: flex;
+    color:white;
+    margin-bottom: 1rem;
+}
+.FormGroup{
+    width:70%;
+    margin:0 auto;
+    padding-top: 3rem;
+}
+.mycustomInput{
+    height: 100% !important;
+}
+.FormLabel{
+    width:50%;
+}

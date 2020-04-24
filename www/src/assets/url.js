@@ -1,0 +1,1 @@
+export var apiUrl = "https://www.xmh0511.top/eprint";

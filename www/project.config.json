@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "eprinter",
+  "description": "eprinter",
+  "appid": "wx7906213a8ffbc6a6",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": true,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
