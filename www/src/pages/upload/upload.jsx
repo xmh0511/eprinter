@@ -1,5 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text, Button, Input } from '@tarojs/components'
+import { AtProgress, AtModal, AtModalHeader, AtModalContent, AtModalAction } from 'taro-ui'
 import './upload.scss'
 import { apiUrl } from "../../assets/url";
 
@@ -13,7 +14,10 @@ export default class Upload extends Component {
     super(props);
     this.state = {
       chooseFile: null,
-      fileName: ""
+      fileName: "",
+      uploadProgress: 0,
+      dialogVisible: false,
+      deleteFileInput: false
     }
     this.fileRef = Taro.createRef();
   }
@@ -32,21 +36,30 @@ export default class Upload extends Component {
     return (
       <View className='upload'>
         <View className="subTitle">
-          <View>
+          <View className="filenameTitle">
             <Text>选择文件名：</Text>
           </View>
-          <View>
+          <View className="filenameShow">
             <Text>{this.state.fileName}</Text>
           </View>
-          <Input type="file" style={{ display: "none" }} ref={this.fileRef} onChange={(e) => {
-            console.log(e);
-            this.setState({ chooseFile: e.target.files[0], fileName: e.target.files[0].name });
-          }}></Input>
+          {
+            this.state.deleteFileInput === true ? null : <Input type="file" style={{ display: "none" }} ref={this.fileRef} onChange={(e) => {
+              console.log(e);
+              this.setState({ chooseFile: e.target.files[0], fileName: e.target.files[0].name });
+            }}></Input>
+          }
+
         </View>
         <View className="uploadView">
           <View>
-            <Button plain type="primary" onClick={() => {
-              this.fileRef.current.inputRef.click();
+            <Button type="primary" onClick={() => {
+              this.setState({ deleteFileInput: true }, () => {
+                this.setState({ deleteFileInput: false }, () => {
+                  setTimeout(() => {
+                    this.fileRef.current.inputRef.click();
+                  })
+                })
+              })
             }}>上传文件</Button>
           </View>
           <View className="confirmPrintView">
@@ -65,16 +78,34 @@ export default class Upload extends Component {
                         console.log(e);
                         var json = JSON.parse(e.currentTarget.responseText);
                         if (json.state === "success") {
-                          Taro.showToast({
-                            title: `准备打印`,
-                            icon: "success"
-                          })
+                          this.setState({ uploadProgress: 0, dialogVisible: false }, () => {
+                            setTimeout(() => {
+                              Taro.showToast({
+                                title: `准备打印`,
+                                icon: "success"
+                              })
+                            }, 40);
+                          });
                         } else {
-                          Taro.showToast({
-                            title: `${json.message}`,
-                            icon: "none"
+                          this.setState({ uploadProgress: 0, dialogVisible: false }, () => {
+                            setTimeout(() => {
+                              Taro.showToast({
+                                title: `${json.message}`,
+                                icon: "none"
+                              })
+                            }, 40)
                           })
                         }
+                      }
+                      xml.upload.onprogress = (e) => {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        this.setState({ uploadProgress: percent });
+                      }
+                      xml.upload.onloadstart = () => {
+                        this.setState({ uploadProgress: 0, dialogVisible: true });
+                      }
+                      xml.onerror = () => {
+                        this.setState({ dialogVisible: false, uploadProgress: 0 });
                       }
                       xml.open("POST", `${apiUrl}/upload`, true);
                       xml.send(formData);
@@ -101,6 +132,12 @@ export default class Upload extends Component {
             }}>确认打印</Button>
           </View>
         </View>
+        <AtModal isOpened={this.state.dialogVisible} closeOnClickOverlay={false}>
+          <AtModalContent className="costumDialog">
+            <AtProgress percent={this.state.uploadProgress} color='#13CE66' />
+          </AtModalContent>
+          <AtModalAction></AtModalAction>
+        </AtModal>
       </View>
     )
   }

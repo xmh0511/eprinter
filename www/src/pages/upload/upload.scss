@@ -12,9 +12,24 @@
 .subTitle{
     display: flex;
     color:white;
-    padding-top: 1.5rem;
-    padding-left: 1.5rem;
+    padding-top: 3.5rem;
 }
 .confirmPrintView{
     margin-top: 50px;
+}
+.costumDialog{
+    height:38px !important;
+    min-height: auto;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.filenameShow{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 70%;
+    font-size: 0.8rem;
+}
+.filenameTitle{
+    width:30%;
+    font-size: 0.8rem;
 }
